@@ -13,8 +13,20 @@ class PostService {
         return await postRepository.findAll();
     }
 
+    async getPostById(postId) {
+        return await postRepository.findById(postId);
+    }
+
     async getPostsByUser(userId) {
         return await postRepository.findByUser(userId);
+    }
+
+    async updatePost(postId, postData) {
+        return await postRepository.update(postId, postData);
+    }
+
+    async deletePost(postId) {
+        return await postRepository.delete(postId);
     }
 }
 

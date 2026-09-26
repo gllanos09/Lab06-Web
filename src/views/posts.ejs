@@ -1,61 +1,63 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Media - Post</title>
-  <!-- Importar Materialize CSS -->
+  <title>Social Media - Posts</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-  <!-- Iconos de Google -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="grey lighten-4">
 
-  <!-- Navbar -->
   <nav>
     <div class="nav-wrapper teal">
-      <a href="#!" class="brand-logo center">Social Media</a>
+      <a href="/" class="brand-logo center">Social Media</a>
     </div>
   </nav>
 
   <div class="container">
-    <h4 class="center-align">Bienvenido a Social Media</h4>
+    <h4 class="center-align">Posts</h4>
+
+    <div class="right-align" style="margin-bottom: 20px;">
+      <a href="/posts/new" class="btn waves-effect waves-light teal">
+        <i class="material-icons left">add</i> Nuevo Post
+      </a>
+    </div>
 
     <div class="row">
-      <!-- Card del Post -->
-      <div class="col s12 m6 l4">
-        <div class="card">
-          <div class="card-image">
-            <img src="https://media.istockphoto.com/id/627795510/photo/example.jpg?s=612x612&w=0&k=20&c=lpUf5rjPVd6Kl_M6heqC8sUncR4FLmtsRzeYdTr5X_I=" alt="Imagen del post">
-          </div>
-          <div class="card-content">
-            <span class="card-title">Título del Post</span>
-            <p>
-              Este es un ejemplo de contenido del post. Aquí puedes escribir la descripción o texto relacionado.
-            </p>
-            <p>
-              <strong>Hashtags:</strong>  
-              <span class="chip">#ejemplo</span>
-              <span class="chip">#social</span>
-              <span class="chip">#media</span>
-              <span class="chip">#práctica</span>
-              <span class="chip">#nodejs</span>
-            </p>
-          </div>
-          <div class="card-action">
-            <div class="right">
-              <a href="#!" class="btn-flat"><i class="material-icons teal-text">edit</i></a>
-              <a href="#!" class="btn-flat"><i class="material-icons red-text">delete</i></a>
+      <% posts.forEach(function(post) { %>
+        <div class="col s12 m6 l4">
+          <div class="card">
+            <div class="card-image">
+              <img src="<%= post.imageUrl || 'https://media.istockphoto.com/id/627795510/photo/example.jpg?s=612x612&w=0&k=20&c=lpUf5rjPVd6Kl_M6heqC8sUncR4FLmtsRzeYdTr5X_I=' %>" alt="Imagen del post">
             </div>
-            <span><strong>Autor:</strong> Juan Pérez</span>
+            <div class="card-content">
+              <span class="card-title"><%= post.title %></span>
+              <p><%= post.content %></p>
+              <p>
+                <strong>Hashtags:</strong>
+                <% (post.hashtags || []).forEach(function(tag) { %>
+                  <span class="chip">#<%= tag %></span>
+                <% }); %>
+              </p>
+            </div>
+            <div class="card-action">
+              <div class="right">
+                <a href="/posts/<%= post._id %>/edit" class="btn-flat"><i class="material-icons teal-text">edit</i></a>
+                <form action="/posts/<%= post._id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este post?');">
+                  <button type="submit" class="btn-flat" style="border:none; background:none;">
+                    <i class="material-icons red-text">delete</i>
+                  </button>
+                </form>
+              </div>
+              <span><strong>Autor:</strong> <%= post.user ? (post.user.name + ' ' + post.user.lastName) : 'Desconocido' %></span>
+            </div>
           </div>
         </div>
-      </div>
+      <% }); %>
     </div>
   </div>
 
-  <!-- Importar Materialize JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>

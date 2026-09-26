@@ -1,4 +1,5 @@
 import postService from "../services/postService.js";
+import userRepository from "../repositories/userRepository.js";
 
 class PostController {
     async create(req, res) {
@@ -14,13 +15,78 @@ class PostController {
     async getAll(req, res) {
         try {
             const posts = await postService.getPosts();
-            console.log(posts);
-            res.render("posts", { posts }); // Renderiza la vista posts/index.ejs
+            res.render("posts", { posts });
         } catch (error) {
             res.status(500).json({ error: error.message });
+        }
+    }
+
+    async renderNewForm(req, res) {
+        try {
+            const users = await userRepository.findAll();
+            res.render("postForm", { post: null, users });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async createFromForm(req, res) {
+        try {
+            const { userId, title, content, hashtags, imageUrl } = req.body;
+            const postData = {
+                title,
+                content,
+                imageUrl,
+                hashtags: hashtags
+                    ? hashtags.split(",").map((h) => h.trim()).filter(Boolean)
+                    : [],
+            };
+            await postService.createPost(userId, postData);
+            res.redirect("/posts");
+        } catch (error) {
+            res.status(400).send(error.message);
+        }
+    }
+
+    async renderEditForm(req, res) {
+        try {
+            const { id } = req.params;
+            const post = await postService.getPostById(id);
+            const users = await userRepository.findAll();
+            res.render("postForm", { post, users });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const { title, content, hashtags, imageUrl } = req.body;
+            const postData = {
+                title,
+                content,
+                imageUrl,
+                hashtags: hashtags
+                    ? hashtags.split(",").map((h) => h.trim()).filter(Boolean)
+                    : [],
+            };
+            await postService.updatePost(id, postData);
+            res.redirect("/posts");
+        } catch (error) {
+            res.status(400).send(error.message);
+        }
+    }
+
+    async delete(req, res) {
+        try {
+            const { id } = req.params;
+            await postService.deletePost(id);
+            res.redirect("/posts");
+        } catch (error) {
+            res.status(400).send(error.message);
         }
     }
 }
 
 export default new PostController();
-
